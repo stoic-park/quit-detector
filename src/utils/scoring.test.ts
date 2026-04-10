@@ -4,10 +4,11 @@ import {
   calculateCategoryScores,
   calculateConsistency,
   getVerdict,
+  getTypeCode,
   getAdvice,
   calculateResult,
 } from './scoring'
-import type { Answers, Question } from '../types'
+import type { Answers, CategoryScore, Question } from '../types'
 
 const questions: Question[] = [
   { id: 1, category: 'jobDemand', text: 'q1', positive: false },
@@ -85,35 +86,92 @@ describe('calculateConsistency', () => {
   })
 })
 
+describe('getTypeCode', () => {
+  it('returns oei when all scores are low', () => {
+    const scores: CategoryScore[] = [
+      { category: 'jobDemand', score: 20, label: '직무 요구' },
+      { category: 'healthBurnout', score: 20, label: '건강/소진' },
+      { category: 'rewardFairness', score: 20, label: '보상 공정성' },
+      { category: 'orgCulture', score: 20, label: '조직 문화' },
+      { category: 'relationConflict', score: 20, label: '관계 갈등' },
+      { category: 'jobInsecurity', score: 20, label: '직무 불안정' },
+      { category: 'jobControl', score: 20, label: '직무 자율' },
+    ]
+    expect(getTypeCode(scores)).toBe('oei')
+  })
+
+  it('returns OEI when all scores are high', () => {
+    const scores: CategoryScore[] = [
+      { category: 'jobDemand', score: 80, label: '직무 요구' },
+      { category: 'healthBurnout', score: 80, label: '건강/소진' },
+      { category: 'rewardFairness', score: 80, label: '보상 공정성' },
+      { category: 'orgCulture', score: 80, label: '조직 문화' },
+      { category: 'relationConflict', score: 80, label: '관계 갈등' },
+      { category: 'jobInsecurity', score: 80, label: '직무 불안정' },
+      { category: 'jobControl', score: 80, label: '직무 자율' },
+    ]
+    expect(getTypeCode(scores)).toBe('OEI')
+  })
+
+  it('returns mixed type correctly', () => {
+    const scores: CategoryScore[] = [
+      { category: 'jobDemand', score: 80, label: '직무 요구' },
+      { category: 'healthBurnout', score: 80, label: '건강/소진' },
+      { category: 'rewardFairness', score: 20, label: '보상 공정성' },
+      { category: 'orgCulture', score: 20, label: '조직 문화' },
+      { category: 'relationConflict', score: 20, label: '관계 갈등' },
+      { category: 'jobInsecurity', score: 20, label: '직무 불안정' },
+      { category: 'jobControl', score: 20, label: '직무 자율' },
+    ]
+    expect(getTypeCode(scores)).toBe('Oei')
+  })
+})
+
 describe('getVerdict', () => {
-  it('returns correct level for each range', () => {
-    expect(getVerdict(0).level).toBe(1)
-    expect(getVerdict(20).level).toBe(1)
-    expect(getVerdict(21).level).toBe(2)
-    expect(getVerdict(40).level).toBe(2)
-    expect(getVerdict(50).level).toBe(3)
-    expect(getVerdict(70).level).toBe(4)
-    expect(getVerdict(100).level).toBe(5)
+  it('returns correct animal for type code', () => {
+    const lowScores: CategoryScore[] = [
+      { category: 'jobDemand', score: 20, label: '직무 요구' },
+      { category: 'healthBurnout', score: 20, label: '건강/소진' },
+      { category: 'rewardFairness', score: 20, label: '보상 공정성' },
+      { category: 'orgCulture', score: 20, label: '조직 문화' },
+      { category: 'relationConflict', score: 20, label: '관계 갈등' },
+      { category: 'jobInsecurity', score: 20, label: '직무 불안정' },
+      { category: 'jobControl', score: 20, label: '직무 자율' },
+    ]
+    const verdict = getVerdict(20, lowScores)
+    expect(verdict.typeCode).toBe('oei')
+    expect(verdict.animal).toBe('ox')
   })
 })
 
 describe('getAdvice', () => {
   it('returns targeted advice for worst category', () => {
-    const verdict = getVerdict(70)
-    const scores = [
-      { category: 'healthBurnout' as const, score: 90, label: '건강/소진', worst: true },
-      { category: 'jobDemand' as const, score: 50, label: '직무 요구' },
+    const scores: CategoryScore[] = [
+      { category: 'healthBurnout', score: 90, label: '건강/소진', worst: true },
+      { category: 'jobDemand', score: 70, label: '직무 요구' },
+      { category: 'rewardFairness', score: 50, label: '보상 공정성' },
+      { category: 'orgCulture', score: 50, label: '조직 문화' },
+      { category: 'relationConflict', score: 50, label: '관계 갈등' },
+      { category: 'jobInsecurity', score: 50, label: '직무 불안정' },
+      { category: 'jobControl', score: 50, label: '직무 자율' },
     ]
+    const verdict = getVerdict(70, scores)
     const advice = getAdvice(verdict, scores)
     expect(advice.headline).toContain('몸과 마음')
     expect(advice.steps.length).toBeGreaterThan(0)
   })
 
   it('returns soft advice when score is low', () => {
-    const verdict = getVerdict(15)
-    const scores = [
-      { category: 'jobDemand' as const, score: 30, label: '직무 요구', worst: true },
+    const scores: CategoryScore[] = [
+      { category: 'jobDemand', score: 30, label: '직무 요구', worst: true },
+      { category: 'healthBurnout', score: 10, label: '건강/소진' },
+      { category: 'rewardFairness', score: 10, label: '보상 공정성' },
+      { category: 'orgCulture', score: 10, label: '조직 문화' },
+      { category: 'relationConflict', score: 10, label: '관계 갈등' },
+      { category: 'jobInsecurity', score: 10, label: '직무 불안정' },
+      { category: 'jobControl', score: 10, label: '직무 자율' },
     ]
+    const verdict = getVerdict(15, scores)
     const advice = getAdvice(verdict, scores)
     expect(advice.headline).toContain('괜찮')
   })
@@ -124,7 +182,7 @@ describe('calculateResult', () => {
     const answers: Answers = { 1: 3, 2: 3, 3: 3 }
     const result = calculateResult(questions, answers)
     expect(result.totalScore).toBe(50)
-    expect(result.verdict.level).toBe(3)
+    expect(result.verdict.typeCode).toBeDefined()
     expect(result.categoryScores.length).toBe(2)
     expect(result.consistency).toBeDefined()
     expect(result.advice).toBeDefined()

@@ -1,0 +1,127 @@
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  image-rendering: pixelated;
+}
+
+.shadow {
+  position: absolute;
+  bottom: -4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  filter: blur(3px);
+}
+
+/* ── 소: 꼬리 흔들기 + 전체 미세 호흡 ── */
+.ox {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.oxTail {
+  animation: tailWag 1.2s ease-in-out infinite;
+  transform-origin: 13px 5px;
+}
+
+.oxEar {
+  animation: earFlick 4s ease-in-out infinite;
+  transform-origin: center 2px;
+}
+
+/* ── 미어캣: 좌우 두리번 ── */
+.meerkat {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.meerkatHead {
+  animation: lookAround 3s ease-in-out infinite;
+}
+
+.meerkatEye {
+  animation: blink 4s ease-in-out infinite;
+}
+
+/* ── 쿼카: 통통 바운스 ── */
+.quokka {
+  animation: bounce 1.5s ease-in-out infinite;
+}
+
+.quokkaBounce {
+  /* inherits parent bounce */
+}
+
+/* ── 고슴도치: 가시 세우기 (부르르) ── */
+.hedgehog {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.hedgehogSpine {
+  animation: bristle 2s ease-in-out infinite;
+  transform-origin: center 4px;
+}
+
+/* ── 철새: 날개짓 + 위아래 떠다님 ── */
+.bird {
+  animation: float 2.5s ease-in-out infinite;
+}
+
+.birdWing {
+  animation: flapWing 0.6s ease-in-out infinite;
+  transform-origin: center 7px;
+}
+
+.birdFloat {
+  /* inherits parent float */
+}
+
+/* ── Keyframes ── */
+@keyframes breathe {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.02); }
+}
+
+@keyframes tailWag {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(8deg); }
+  75% { transform: rotate(-8deg); }
+}
+
+@keyframes earFlick {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.7); }
+}
+
+@keyframes lookAround {
+  0%, 100% { transform: translateX(0); }
+  30% { transform: translateX(-0.5px); }
+  70% { transform: translateX(0.5px); }
+}
+
+@keyframes blink {
+  0%, 42%, 48%, 100% { opacity: 1; }
+  45% { opacity: 0; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes bristle {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.06, 0.96); }
+  30% { transform: scale(0.97, 1.03); }
+  45% { transform: scale(1.03, 0.98); }
+  60% { transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes flapWing {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.6); }
+}

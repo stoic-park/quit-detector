@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { QuizResult } from '../../types'
+import { PixelAnimal } from '../PixelAnimal/PixelAnimal'
 import { shareResultImage } from '../../utils/shareImage'
 import styles from './Result.module.css'
 
@@ -13,12 +14,13 @@ export function Result({ result, onRestart, onShowMethodology }: ResultProps) {
   const { totalScore, verdict, categoryScores, consistency, advice } = result
   const [sharing, setSharing] = useState(false)
   const [shareStatus, setShareStatus] = useState<string | null>(null)
+  const captureRef = useRef<HTMLDivElement>(null)
 
   const handleShare = async () => {
     setSharing(true)
     setShareStatus(null)
     try {
-      const outcome = await shareResultImage(result)
+      const outcome = await shareResultImage(result, captureRef.current)
       if (outcome === 'shared') setShareStatus('공유됨!')
       else if (outcome === 'downloaded') setShareStatus('이미지 저장됨!')
       else setShareStatus('공유 실패')
@@ -32,88 +34,134 @@ export function Result({ result, onRestart, onShowMethodology }: ResultProps) {
 
   return (
     <div className={styles.result}>
-      <div
-        className={styles.scoreCard}
-        style={{ borderColor: verdict.color }}
-      >
-        <div className={styles.scoreLabel}>종합 점수</div>
+      {/* 캡처 영역 시작 */}
+      <div ref={captureRef} className={styles.captureArea}>
+        <div className={styles.captureHeader}>직장인 퇴사 판독기</div>
+
         <div
-          className={styles.scoreValue}
-          style={{ color: verdict.color }}
+          className={styles.scoreCard}
+          style={{ borderColor: verdict.color }}
         >
-          {totalScore}
-          <span className={styles.scoreMax}>/100</span>
-        </div>
-        <div
-          className={styles.verdictBadge}
-          style={{
-            background: `${verdict.color}22`,
-            color: verdict.color,
-          }}
-        >
-          Level {verdict.level} · {verdict.title}
-        </div>
-      </div>
-
-      <div className={styles.verdictBox}>
-        <p className={styles.verdictDesc}>{verdict.description}</p>
-      </div>
-
-      <div className={styles.adviceBox} style={{ borderLeftColor: verdict.color }}>
-        <div className={styles.adviceHeader}>
-          <span className={styles.adviceIcon}>💡</span>
-          <h3 className={styles.adviceHeadline}>{advice.headline}</h3>
-        </div>
-        <ol className={styles.adviceSteps}>
-          {advice.steps.map((step, i) => (
-            <li key={i}>{step}</li>
-          ))}
-        </ol>
-        {advice.reflect && (
-          <p className={styles.adviceReflect}>{advice.reflect}</p>
-        )}
-      </div>
-
-      <div className={styles.breakdown}>
-        <h3 className={styles.breakdownTitle}>카테고리별 점수</h3>
-        <div className={styles.categories}>
-          {categoryScores.map((cat) => (
+          <div className={styles.animalWrap}>
+            <PixelAnimal animal={verdict.animal} size={120} />
+          </div>
+          <div
+            className={styles.archetypeName}
+            style={{ color: verdict.color }}
+          >
+            {verdict.archetype}
+          </div>
+          <div className={styles.typeRow}>
+            <span className={styles.typeCode} style={{ color: verdict.color }}>
+              {verdict.typeCode}
+            </span>
+            <span className={styles.typeName}>{verdict.typeName}</span>
+          </div>
+          <p className={styles.slogan}>"{verdict.slogan}"</p>
+          <div className={styles.scoreRow}>
             <div
-              key={cat.category}
-              className={`${styles.category} ${cat.worst ? styles.worstCategory : ''}`}
+              className={styles.scoreValue}
+              style={{ color: verdict.color }}
             >
-              <div className={styles.catHeader}>
-                <span className={styles.catLabel}>
-                  {cat.label}
-                  {cat.worst && (
-                    <span className={styles.worstBadge}>주의</span>
-                  )}
-                </span>
-                <span className={styles.catScore}>{cat.score}</span>
-              </div>
-              <div className={styles.catBar}>
-                <div
-                  className={styles.catBarFill}
-                  style={{
-                    width: `${cat.score}%`,
-                    background: getBarColor(cat.score),
-                  }}
-                />
-              </div>
+              {totalScore}
             </div>
-          ))}
+          </div>
+          <div className={styles.tags}>
+            {verdict.tags.map((tag) => (
+              <span key={tag} className={styles.tag}>{tag}</span>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div
-        className={`${styles.consistencyBox} ${styles[`consistency_${consistency.level}`]}`}
-      >
-        <div className={styles.consistencyRow}>
-          <span className={styles.consistencyLabel}>응답 일관성</span>
-          <span className={styles.consistencyValue}>{consistency.label}</span>
+        <div className={styles.axesBox}>
+          <h3 className={styles.axesTitle}>3축 분석</h3>
+          {(['O', 'E', 'I'] as const).map((axis) => {
+            const data = verdict.axes[axis]
+            const labels = { O: '과부하', E: '환경불만', I: '불안/통제' }
+            return (
+              <div key={axis} className={styles.axisRow}>
+                <span className={styles.axisLabel}>
+                  <strong style={{ color: data.high ? verdict.color : 'rgba(255,255,255,0.5)' }}>{axis}</strong>
+                  {' '}{labels[axis]}
+                </span>
+                <div className={styles.axisBar}>
+                  <div
+                    className={styles.axisBarFill}
+                    style={{
+                      width: `${data.score}%`,
+                      background: data.high ? verdict.color : 'rgba(255,255,255,0.25)',
+                    }}
+                  />
+                </div>
+                <span className={styles.axisScore}>{data.score}</span>
+              </div>
+            )
+          })}
         </div>
-        <p className={styles.consistencyNote}>{consistency.note}</p>
+
+        <div className={styles.verdictBox}>
+          <p className={styles.verdictDesc}>{verdict.description}</p>
+        </div>
+
+        <div className={styles.adviceBox} style={{ borderLeftColor: verdict.color }}>
+          <div className={styles.adviceHeader}>
+            <span className={styles.adviceIcon}>💡</span>
+            <h3 className={styles.adviceHeadline}>{advice.headline}</h3>
+          </div>
+          <ol className={styles.adviceSteps}>
+            {advice.steps.map((step, i) => (
+              <li key={i}>{step}</li>
+            ))}
+          </ol>
+          {advice.reflect && (
+            <p className={styles.adviceReflect}>{advice.reflect}</p>
+          )}
+        </div>
+
+        <div className={styles.breakdown}>
+          <h3 className={styles.breakdownTitle}>카테고리별 점수</h3>
+          <div className={styles.categories}>
+            {categoryScores.map((cat) => (
+              <div
+                key={cat.category}
+                className={`${styles.category} ${cat.worst ? styles.worstCategory : ''}`}
+              >
+                <div className={styles.catHeader}>
+                  <span className={styles.catLabel}>
+                    {cat.label}
+                    {cat.worst && (
+                      <span className={styles.worstBadge}>주의</span>
+                    )}
+                  </span>
+                  <span className={styles.catScore}>{cat.score}</span>
+                </div>
+                <div className={styles.catBar}>
+                  <div
+                    className={styles.catBarFill}
+                    style={{
+                      width: `${cat.score}%`,
+                      background: getBarColor(cat.score),
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div
+          className={`${styles.consistencyBox} ${styles[`consistency_${consistency.level}`]}`}
+        >
+          <div className={styles.consistencyRow}>
+            <span className={styles.consistencyLabel}>응답 일관성</span>
+            <span className={styles.consistencyValue}>{consistency.label}</span>
+          </div>
+          <p className={styles.consistencyNote}>{consistency.note}</p>
+        </div>
+
+        <div className={styles.captureFooter}>quit-detector.vercel.app</div>
       </div>
+      {/* 캡처 영역 끝 */}
 
       <div className={styles.actions}>
         <button

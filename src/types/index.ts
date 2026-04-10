@@ -41,11 +41,25 @@ export interface Consistency {
   flatlined: boolean
 }
 
+export type AnimalType = 'ox' | 'meerkat' | 'quokka' | 'hedgehog' | 'bird'
+
+export type TypeCode = 'OEI' | 'OEi' | 'OeI' | 'Oei' | 'oEI' | 'oEi' | 'oeI' | 'oei'
+
 export interface Verdict {
-  level: 1 | 2 | 3 | 4 | 5
-  title: string
+  typeCode: TypeCode
+  totalScore: number
+  animal: AnimalType
+  typeName: string
+  archetype: string
+  slogan: string
+  tags: string[]
   description: string
   color: string
+  axes: {
+    O: { score: number; high: boolean }
+    E: { score: number; high: boolean }
+    I: { score: number; high: boolean }
+  }
 }
 
 export interface AdvicePack {

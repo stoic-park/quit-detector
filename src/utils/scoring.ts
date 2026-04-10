@@ -1,5 +1,6 @@
 import type {
   AdvicePack,
+  AnimalType,
   Answers,
   AnswerValue,
   Category,
@@ -7,6 +8,7 @@ import type {
   Consistency,
   Question,
   QuizResult,
+  TypeCode,
   Verdict,
 } from '../types'
 import { CATEGORY_LABELS } from '../types'
@@ -120,49 +122,151 @@ export function calculateConsistency(answers: Answers): Consistency {
   }
 }
 
-export function getVerdict(totalScore: number): Verdict {
-  if (totalScore <= 20) {
-    return {
-      level: 1,
-      title: '천직이네요!',
-      description:
-        '당신은 지금 자리에 잘 맞는 것 같아요. 지금의 루틴과 관계를 소중히 지켜가세요.',
-      color: '#16a34a',
-    }
-  }
-  if (totalScore <= 40) {
-    return {
-      level: 2,
-      title: '아직은 견딜 만',
-      description:
-        '전반적으로 괜찮지만 몇 가지 아쉬운 부분이 있네요. 퇴사까지는 아닙니다.',
-      color: '#65a30d',
-    }
-  }
-  if (totalScore <= 60) {
-    return {
-      level: 3,
-      title: '경고등 점멸 중',
-      description:
-        '스트레스가 쌓이고 있어요. 이대로 두면 감정이 더 상할 수 있어요.',
-      color: '#eab308',
-    }
-  }
-  if (totalScore <= 80) {
-    return {
-      level: 4,
-      title: '진지하게 고민할 때',
-      description:
-        '여러 영역에서 빨간불이 켜졌어요. 퇴사를 진지하게 검토할 시점입니다.',
-      color: '#f97316',
-    }
-  }
-  return {
-    level: 5,
-    title: '당장 탈출하세요',
-    description:
-      '건강과 삶의 질이 위협받고 있어요. 이 상황을 더 견디는 건 위험합니다.',
+/**
+ * 3이진축 유형 분류 시스템
+ *
+ * O축 (과부하): 직무요구 + 건강소진
+ * E축 (환경불만): 보상공정성 + 조직문화 + 관계갈등
+ * I축 (불안/통제): 직무불안정 + 직무자율
+ *
+ * 대문자 = High(50점 초과), 소문자 = Low
+ * → 8가지 유형 조합
+ */
+
+interface TypeProfile {
+  animal: AnimalType
+  typeName: string
+  archetype: string
+  slogan: string
+  tags: string[]
+  description: string
+  color: string
+}
+
+const TYPE_PROFILES: Record<TypeCode, TypeProfile> = {
+  oei: {
+    animal: 'ox',
+    typeName: '안정형',
+    archetype: '묵묵한 소',
+    slogan: '오늘도 묵묵히... 소처럼 일했습니다',
+    tags: ['#칼퇴가능', '#점심뭐먹지', '#복지요정'],
+    description: '지금 자리에 잘 맞는 것 같아요. 모든 축이 안정적입니다. 지금의 루틴과 관계를 소중히 지켜가세요.',
+    color: '#16a34a',
+  },
+  oeI: {
+    animal: 'meerkat',
+    typeName: '불안통제형',
+    archetype: '두리번 미어캣',
+    slogan: '일은 괜찮은데, 내 자리가 흔들리는 느낌',
+    tags: ['#눈치왕', '#고용불안', '#이력서만져볼까'],
+    description: '업무와 환경은 괜찮지만, 미래에 대한 불안과 재량권 부족이 신경 쓰여요. 커리어 방향을 점검해볼 시점입니다.',
+    color: '#65a30d',
+  },
+  oEi: {
+    animal: 'meerkat',
+    typeName: '조직회의형',
+    archetype: '눈치왕 미어캣',
+    slogan: '눈치 365일, 이 회사 분위기 뭔가 이상해요',
+    tags: ['#눈치왕', '#조직문화의문', '#연봉협상대기'],
+    description: '몸은 괜찮지만 조직, 관계, 보상에서 불만이 쌓이고 있어요. 환경이 바뀌지 않으면 감정이 소모됩니다.',
+    color: '#65a30d',
+  },
+  Oei: {
+    animal: 'quokka',
+    typeName: '소진형',
+    archetype: '겉웃음 쿼카',
+    slogan: '웃는 게 아니라, 웃는 근육이 굳은 거예요',
+    tags: ['#조용한퇴사', '#번아웃', '#퇴근만기다려'],
+    description: '업무 과부하와 체력 소진이 문제예요. 환경은 나쁘지 않지만 몸이 먼저 나가고 있어요.',
+    color: '#eab308',
+  },
+  oEI: {
+    animal: 'quokka',
+    typeName: '환경불안형',
+    archetype: '웃프 쿼카',
+    slogan: '겉으론 웃지만, 회사도 미래도 불투명해요',
+    tags: ['#잡플래닛즐겨찾기', '#고용불안', '#조직문화환멸'],
+    description: '체력은 버틸 만하지만 조직 환경과 미래 전망이 모두 부정적이에요. 이직 준비를 시작하세요.',
+    color: '#eab308',
+  },
+  OeI: {
+    animal: 'hedgehog',
+    typeName: '과로불안형',
+    archetype: '지친 고슴도치',
+    slogan: '혼자 다 끌어안으며 불안에 떨고 있어요',
+    tags: ['#사직서hwp', '#과로', '#고용불안'],
+    description: '일은 넘치는데 미래도 불안해요. 가시를 세울 수밖에 없는 상황입니다. 짐을 내려놓을 방법을 찾으세요.',
+    color: '#f97316',
+  },
+  OEi: {
+    animal: 'hedgehog',
+    typeName: '이중고형',
+    archetype: '가시 세운 고슴도치',
+    slogan: '건드리지 마세요, 사직서.hwp 열려있습니다',
+    tags: ['#사직서hwp', '#이력서업데이트', '#현타옴'],
+    description: '업무 과부하에 환경까지 나빠요. 몸도 마음도 지쳐가고 있어요. 퇴사를 진지하게 검토할 시점입니다.',
+    color: '#f97316',
+  },
+  OEI: {
+    animal: 'bird',
+    typeName: '완전연소형',
+    archetype: '탈출한 철새',
+    slogan: '도비는 자유예요. 저도요.',
+    tags: ['#탈주각', '#도비는자유예요', '#내일출근안함'],
+    description: '모든 축에서 빨간불이에요. 과부하, 나쁜 환경, 불안한 미래. 건강을 지키려면 지금 움직여야 합니다.',
     color: '#dc2626',
+  },
+}
+
+function getCategoryMap(categoryScores: CategoryScore[]): Record<Category, number> {
+  const map: Record<string, number> = {}
+  for (const cs of categoryScores) {
+    map[cs.category] = cs.score
+  }
+  return map as Record<Category, number>
+}
+
+export function getTypeCode(categoryScores: CategoryScore[]): TypeCode {
+  const m = getCategoryMap(categoryScores)
+  const oScore = ((m.jobDemand ?? 0) + (m.healthBurnout ?? 0)) / 2
+  const eScore = ((m.rewardFairness ?? 0) + (m.orgCulture ?? 0) + (m.relationConflict ?? 0)) / 3
+  const iScore = ((m.jobInsecurity ?? 0) + (m.jobControl ?? 0)) / 2
+
+  const O = oScore > 50
+  const E = eScore > 50
+  const I = iScore > 50
+
+  return `${O ? 'O' : 'o'}${E ? 'E' : 'e'}${I ? 'I' : 'i'}` as TypeCode
+}
+
+export function getAxesScores(categoryScores: CategoryScore[]) {
+  const m = getCategoryMap(categoryScores)
+  const oScore = Math.round(((m.jobDemand ?? 0) + (m.healthBurnout ?? 0)) / 2)
+  const eScore = Math.round(((m.rewardFairness ?? 0) + (m.orgCulture ?? 0) + (m.relationConflict ?? 0)) / 3)
+  const iScore = Math.round(((m.jobInsecurity ?? 0) + (m.jobControl ?? 0)) / 2)
+  return {
+    O: { score: oScore, high: oScore > 50 },
+    E: { score: eScore, high: eScore > 50 },
+    I: { score: iScore, high: iScore > 50 },
+  }
+}
+
+export function getVerdict(totalScore: number, categoryScores: CategoryScore[]): Verdict {
+  const typeCode = getTypeCode(categoryScores)
+  const axes = getAxesScores(categoryScores)
+  const profile = TYPE_PROFILES[typeCode]
+
+  return {
+    typeCode,
+    totalScore,
+    animal: profile.animal,
+    typeName: profile.typeName,
+    archetype: profile.archetype,
+    slogan: profile.slogan,
+    tags: profile.tags,
+    description: profile.description,
+    color: profile.color,
+    axes,
   }
 }
 
@@ -183,7 +287,8 @@ export function getAdvice(
   }
 
   const cat = worst.category
-  const level = verdict.level
+  // 총점 기준 심각도 레벨 (조언 톤 결정용)
+  const level = verdict.totalScore <= 40 ? 2 : 3
 
   const ADVICE_BY_CATEGORY: Record<
     Category,
@@ -284,8 +389,8 @@ export function calculateResult(
   answers: Answers,
 ): QuizResult {
   const totalScore = calculateTotalScore(questions, answers)
-  const verdict = getVerdict(totalScore)
   const categoryScores = calculateCategoryScores(questions, answers)
+  const verdict = getVerdict(totalScore, categoryScores)
   const consistency = calculateConsistency(answers)
   const advice = getAdvice(verdict, categoryScores)
   return { totalScore, verdict, categoryScores, consistency, advice }

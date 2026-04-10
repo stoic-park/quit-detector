@@ -5,31 +5,173 @@
   animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.captureArea {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 0;
+  background: linear-gradient(180deg, #1e1b4b 0%, #020617 100%);
+  border-radius: 24px;
+}
+
+.captureHeader {
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 1.5px;
+  padding-bottom: 4px;
+}
+
+.captureFooter {
+  text-align: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.3);
+  padding-top: 8px;
+}
+
 .scoreCard {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
   padding: 36px 24px;
+  margin: 0 16px;
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid;
   border-radius: 24px;
-  backdrop-filter: blur(12px);
 }
 
-.scoreLabel {
+.animalWrap {
+  margin-bottom: 4px;
+}
+
+.archetypeName {
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.typeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.typeCode {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.typeName {
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.5px;
+}
+
+.axesBox {
+  padding: 20px 24px;
+  margin: 0 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+}
+
+.axesTitle {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 14px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
+}
+
+.axisRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.axisRow:last-child {
+  margin-bottom: 0;
+}
+
+.axisLabel {
+  flex-shrink: 0;
+  width: 100px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.axisBar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.axisBarFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.axisScore {
+  flex-shrink: 0;
+  width: 30px;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: white;
+  font-variant-numeric: tabular-nums;
+}
+
+.slogan {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
+  font-style: italic;
+  text-align: center;
+  margin: 0;
+  padding: 0 12px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.scoreRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
 }
 
 .scoreValue {
-  font-size: 5rem;
+  font-size: 3.5rem;
   font-weight: 900;
   line-height: 1;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -3px;
+  letter-spacing: -2px;
 }
 
 .scoreMax {
@@ -48,6 +190,7 @@
 
 .verdictBox {
   padding: 22px 24px;
+  margin: 0 16px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 16px;
 }
@@ -61,6 +204,7 @@
 
 .adviceBox {
   padding: 22px 24px;
+  margin: 0 16px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   border-left: 4px solid;
@@ -116,6 +260,7 @@
 
 .breakdown {
   padding: 20px 24px;
+  margin: 0 16px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 16px;
 }
@@ -189,6 +334,7 @@
 
 .consistencyBox {
   padding: 14px 18px;
+  margin: 0 16px;
   border-radius: 12px;
   border: 1px solid;
 }
