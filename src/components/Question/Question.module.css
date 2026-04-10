@@ -1,0 +1,128 @@
+.question {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: slideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.category {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #a78bfa;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1.5;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(4px);
+}
+
+.optionSelected {
+  background: rgba(167, 139, 250, 0.15);
+  border-color: #a78bfa;
+  color: white;
+}
+
+.optionDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.optionDot[data-level='1'] {
+  background: #1e3a8a;
+}
+.optionDot[data-level='2'] {
+  background: #3b82f6;
+}
+.optionDot[data-level='3'] {
+  background: #94a3b8;
+}
+.optionDot[data-level='4'] {
+  background: #fb923c;
+}
+.optionDot[data-level='5'] {
+  background: #ef4444;
+}
+
+.optionSelected .optionDot {
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.25);
+}
+
+.optionLabel {
+  flex: 1;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+.backBtn {
+  padding: 10px 18px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.backBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

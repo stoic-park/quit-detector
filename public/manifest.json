@@ -1,0 +1,19 @@
+{
+  "name": "직장인 퇴사 판독기",
+  "short_name": "퇴사판독기",
+  "description": "KOSS-SF와 MBI 모델을 참고한 21문항 심리검사",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "orientation": "portrait",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
