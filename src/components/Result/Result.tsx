@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import type { QuizResult } from '../../types'
 import { PixelAnimal } from '../PixelAnimal/PixelAnimal'
+import { ShareButtons } from '../ShareButtons/ShareButtons'
 import { shareResultImage } from '../../utils/shareImage'
 import styles from './Result.module.css'
 
@@ -163,6 +164,11 @@ export function Result({ result, onRestart, onShowMethodology }: ResultProps) {
       </div>
       {/* 캡처 영역 끝 */}
 
+      <ShareButtons
+        result={result}
+        onCaptureShare={async () => { await handleShare() }}
+      />
+
       <div className={styles.actions}>
         <button
           type="button"
@@ -177,7 +183,7 @@ export function Result({ result, onRestart, onShowMethodology }: ResultProps) {
           onClick={handleShare}
           disabled={sharing}
         >
-          {sharing ? '이미지 생성 중...' : shareStatus ?? '결과 이미지 공유'}
+          {sharing ? '이미지 생성 중...' : shareStatus ?? '결과 이미지 저장'}
         </button>
       </div>
 
