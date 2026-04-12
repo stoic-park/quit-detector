@@ -41,9 +41,9 @@
   transform: scale(0.95);
 }
 
-.kakao {
-  background: #fee500;
-  color: #191919;
+.link {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
 }
 
 .facebook {

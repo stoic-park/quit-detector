@@ -7,17 +7,21 @@ import type { QuizResult } from '../types'
 export async function captureResultElement(
   element: HTMLElement,
 ): Promise<Blob | null> {
-  const { default: html2canvas } = await import('html2canvas')
-  const canvas = await html2canvas(element, {
-    backgroundColor: '#020617',
-    scale: 2,
-    useCORS: true,
-    logging: false,
-  })
+  try {
+    const { default: html2canvas } = await import('html2canvas')
+    const canvas = await html2canvas(element, {
+      backgroundColor: '#020617',
+      scale: 2,
+      useCORS: true,
+      logging: false,
+    })
 
-  return await new Promise((resolve) =>
-    canvas.toBlob((blob) => resolve(blob), 'image/png'),
-  )
+    return await new Promise((resolve) =>
+      canvas.toBlob((blob) => resolve(blob), 'image/png'),
+    )
+  } catch {
+    return null
+  }
 }
 
 export async function shareResultImage(

@@ -1,0 +1,10 @@
+{
+  "active": true,
+  "started_at": "2026-04-12T03:54:39.367Z",
+  "original_prompt": "/autopilot 이제 QA를 진행해볼까 자체적으로?",
+  "session_id": "a5cdec72-3a75-4f07-ab6e-22bc232568d8",
+  "project_path": "/Users/stpark/99.personal/01.laboratory/quit-detector",
+  "reinforcement_count": 1,
+  "awaiting_confirmation": true,
+  "last_checked_at": "2026-04-12T03:57:37.028Z"
+}

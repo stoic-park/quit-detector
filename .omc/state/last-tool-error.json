@@ -1,7 +1,7 @@
 {
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"gh auth status 2>&1\",\"description\":\"Check GitHub CLI auth status\"}",
-  "error": "Exit code 127\n(eval):1: command not found: gh\n[rerun: b30]",
-  "timestamp": "2026-04-10T07:43:59.552Z",
-  "retry_count": 2
+  "tool_name": "Read",
+  "tool_input_preview": "{\"file_path\":\"/Users/stpark/99.personal/01.laboratory/quit-detector/src/test\"}",
+  "error": "EISDIR: illegal operation on a directory, read '/Users/stpark/99.personal/01.laboratory/quit-detector/src/test'",
+  "timestamp": "2026-04-12T03:55:48.628Z",
+  "retry_count": 1
 }

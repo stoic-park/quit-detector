@@ -218,12 +218,12 @@ const TYPE_PROFILES: Record<TypeCode, TypeProfile> = {
   },
 }
 
-function getCategoryMap(categoryScores: CategoryScore[]): Record<Category, number> {
-  const map: Record<string, number> = {}
+function getCategoryMap(categoryScores: CategoryScore[]): Partial<Record<Category, number>> {
+  const map: Partial<Record<Category, number>> = {}
   for (const cs of categoryScores) {
     map[cs.category] = cs.score
   }
-  return map as Record<Category, number>
+  return map
 }
 
 export function getTypeCode(categoryScores: CategoryScore[]): TypeCode {
@@ -287,8 +287,8 @@ export function getAdvice(
   }
 
   const cat = worst.category
-  // 총점 기준 심각도 레벨 (조언 톤 결정용)
-  const level = verdict.totalScore <= 40 ? 2 : 3
+  // 총점 기준 심각도: <=40 소프트 톤, >40 경고 톤
+  const isMild = verdict.totalScore <= 40
 
   const ADVICE_BY_CATEGORY: Record<
     Category,
@@ -369,7 +369,7 @@ export function getAdvice(
   const pack = ADVICE_BY_CATEGORY[cat]
 
   // 레벨이 매우 낮으면 (level 1-2) 경고보다 유지 조언으로 바꿔 소프트 톤
-  if (level <= 2) {
+  if (isMild) {
     return {
       headline: '지금 상태는 괜찮지만, 한 가지 기억해 두세요.',
       steps: [
