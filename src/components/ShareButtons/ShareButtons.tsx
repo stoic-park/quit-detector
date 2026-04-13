@@ -1,6 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { QuizResult } from '../../types'
 import styles from './ShareButtons.module.css'
+
+declare global {
+  interface Window {
+    Kakao?: {
+      init: (key: string) => void
+      isInitialized: () => boolean
+      Share: {
+        sendDefault: (params: Record<string, unknown>) => void
+      }
+    }
+  }
+}
 
 interface ShareButtonsProps {
   result: QuizResult
@@ -8,6 +20,7 @@ interface ShareButtonsProps {
 }
 
 const SITE_URL = 'https://quit-detector.vercel.app'
+const KAKAO_KEY = 'f1ccce0f9215c147a2626a4537e1931e'
 
 function getShareText(result: QuizResult) {
   return `내 퇴사 유형은 "${result.verdict.archetype}" (${result.verdict.typeName})!\n퇴사 점수: ${result.totalScore}점\n"${result.verdict.slogan}"\n\n나도 테스트 해보기 👉`
@@ -15,6 +28,12 @@ function getShareText(result: QuizResult) {
 
 export function ShareButtons({ result, onCaptureShare }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init(KAKAO_KEY)
+    }
+  }, [])
 
   const shareText = getShareText(result)
 
@@ -52,23 +71,24 @@ export function ShareButtons({ result, onCaptureShare }: ShareButtonsProps) {
     }
   }
 
-  const handleKakaoTalk = async () => {
-    const text = `${shareText}\n${SITE_URL}`
-    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent)
+  const handleKakaoTalk = () => {
+    if (!window.Kakao?.isInitialized()) return
 
-    if (isMobile) {
-      const kakaoLink = `kakaotalk://msg/text/send?text=${encodeURIComponent(text)}`
-      window.location.href = kakaoLink
-      return
-    }
-
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2500)
-    } catch {
-      setCopied(false)
-    }
+    window.Kakao.Share.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: `${result.verdict.archetype} · ${result.verdict.typeName}`,
+        description: `퇴사 점수 ${result.totalScore}점 — "${result.verdict.slogan}"`,
+        imageUrl: `${SITE_URL}/og-image.png`,
+        link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL },
+      },
+      buttons: [
+        {
+          title: '나도 테스트하기',
+          link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL },
+        },
+      ],
+    })
   }
 
   const handleFacebook = () => {
