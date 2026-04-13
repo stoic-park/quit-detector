@@ -52,6 +52,12 @@ export function ShareButtons({ result, onCaptureShare }: ShareButtonsProps) {
     }
   }
 
+  const handleKakaoTalk = () => {
+    const text = `${shareText}\n${SITE_URL}`
+    const kakaoUrl = `https://sharer.kakao.com/talk/friends/picker/link?url=${encodeURIComponent(SITE_URL)}&text=${encodeURIComponent(text)}`
+    window.open(kakaoUrl, '_blank', 'width=600,height=700')
+  }
+
   const handleFacebook = () => {
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SITE_URL)}`,
@@ -96,6 +102,17 @@ export function ShareButtons({ result, onCaptureShare }: ShareButtonsProps) {
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
           </svg>
           {copied && <span className={styles.toast}>링크 복사됨!</span>}
+        </button>
+
+        <button
+          type="button"
+          className={`${styles.shareBtn} ${styles.kakao}`}
+          onClick={handleKakaoTalk}
+          aria-label="카카오톡 공유"
+        >
+          <svg viewBox="0 0 24 24" width="24" height="24">
+            <path fill="currentColor" d="M12 3C6.5 3 2 6.58 2 11c0 2.83 1.82 5.3 4.56 6.72l-1.16 4.28 4.96-3.26c.52.06 1.06.1 1.64.1 5.5 0 10-3.58 10-8S17.5 3 12 3z"/>
+          </svg>
         </button>
 
         <button
