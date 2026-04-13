@@ -20,7 +20,7 @@ interface ShareButtonsProps {
 }
 
 const SITE_URL = 'https://quit-detector.vercel.app'
-const KAKAO_KEY = 'f1ccce0f9215c147a2626a4537e1931e'
+const KAKAO_KEY = '8bb253546ea54c6b3628d3b3b37d4c02'
 
 function getShareText(result: QuizResult) {
   return `내 퇴사 유형은 "${result.verdict.archetype}" (${result.verdict.typeName})!\n퇴사 점수: ${result.totalScore}점\n"${result.verdict.slogan}"\n\n나도 테스트 해보기 👉`
