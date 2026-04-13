@@ -52,10 +52,23 @@ export function ShareButtons({ result, onCaptureShare }: ShareButtonsProps) {
     }
   }
 
-  const handleKakaoTalk = () => {
+  const handleKakaoTalk = async () => {
     const text = `${shareText}\n${SITE_URL}`
-    const kakaoUrl = `https://sharer.kakao.com/talk/friends/picker/link?url=${encodeURIComponent(SITE_URL)}&text=${encodeURIComponent(text)}`
-    window.open(kakaoUrl, '_blank', 'width=600,height=700')
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent)
+
+    if (isMobile) {
+      const kakaoLink = `kakaotalk://msg/text/send?text=${encodeURIComponent(text)}`
+      window.location.href = kakaoLink
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2500)
+    } catch {
+      setCopied(false)
+    }
   }
 
   const handleFacebook = () => {
@@ -113,6 +126,7 @@ export function ShareButtons({ result, onCaptureShare }: ShareButtonsProps) {
           <svg viewBox="0 0 24 24" width="24" height="24">
             <path fill="currentColor" d="M12 3C6.5 3 2 6.58 2 11c0 2.83 1.82 5.3 4.56 6.72l-1.16 4.28 4.96-3.26c.52.06 1.06.1 1.64.1 5.5 0 10-3.58 10-8S17.5 3 12 3z"/>
           </svg>
+          {copied && <span className={styles.toast}>링크 복사됨!</span>}
         </button>
 
         <button
